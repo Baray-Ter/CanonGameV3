@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
-    PlayerBaseState currentState;
-    public PlayerDefaultShotState DefaultShotState = new PlayerDefaultShotState();
+    PlayerShootingState currentState;
 
-    public float shootingSpeed = 1f;
+    public PlayerDefaultState DefaultShotState = new PlayerDefaultState();
 
     private void Start()
     {
@@ -19,12 +18,26 @@ public class PlayerStateManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        currentState.UpdateState(this);
+        
     }
 
-    public void SwitchState(PlayerBaseState state)
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.name == PowerUps.SpeedUp)
+        {
+            Destroy(other.gameObject);
+            currentState.OnCollisionEnter(this, other.collider);
+        }
+    }
+
+    public void SwitchState(PlayerShootingState state)
     {
         currentState = state;
         currentState.EnterState(this);
+    }
+
+    public class PowerUps
+    {
+        public static string SpeedUp = "SpeedUp";
     }
 }
